@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.javaex.dao.GuestBookDao;
+import com.javaex.util.WebUtil;
 import com.javaex.vo.GuestVo;
 
 @WebServlet("/gbc")
@@ -18,9 +19,9 @@ public class GuestbookController extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		RequestDispatcher rd;
 		GuestBookDao dao;
 		GuestVo vo;
+		String url;
 		String action = request.getParameter("a");
 		
 		System.out.println("\nHI! This is Servlet.");
@@ -32,8 +33,8 @@ public class GuestbookController extends HttpServlet {
 			List<GuestVo> gList = dao.getList();
 			
 			request.setAttribute("gList", gList);
-			rd = request.getRequestDispatcher("list.jsp");
-			rd.forward(request, response);
+			url = "/WEB-INF/list.jsp";
+			WebUtil.forward(request, response, url);
 			
 		} else if ("add".equals(action)) {
 			System.out.println("This is add.");
@@ -49,15 +50,16 @@ public class GuestbookController extends HttpServlet {
 
 			dao.insert(vo);
 
-			response.sendRedirect("gbc?a=list");
+			url = "gbc?a=list";
+			WebUtil.redirect(request, response, url);
 
 		} else if ("deleteform".equals(action)) {
 			System.out.println("This is deleteform.");
 			
 			int no = Integer.parseInt(request.getParameter("no"));
 			request.setAttribute("no", no);
-			rd = request.getRequestDispatcher("deleteform.jsp");
-			rd.forward(request, response);
+			url = "/WEB-INF/deleteform.jsp";
+			WebUtil.forward(request, response, url);
 			
 		} else if("delete".equals(action)){
 			System.out.println("This is delete.");
@@ -68,7 +70,8 @@ public class GuestbookController extends HttpServlet {
 			dao = new GuestBookDao();
 			dao.delete(no, password);
 			
-			response.sendRedirect("gbc?a=list");
+			url = "gbc?a=list";
+			WebUtil.redirect(request, response, url);
 			
 		} else {
 			System.out.println("a is wrong value.");
